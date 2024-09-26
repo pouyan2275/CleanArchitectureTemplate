@@ -25,6 +25,7 @@ app.UseCors(o =>
     o.AllowAnyOrigin();
     o.AllowAnyMethod();
     o.AllowAnyHeader();
+    o.Build();
 });
 
 app.Run();

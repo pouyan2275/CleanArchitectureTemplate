@@ -3,6 +3,7 @@
     myModal.show()
 }
 function CloseModal(modalId) {
-    var myModal = new bootstrap.Modal(document.getElementById(modalId))
-    myModal.show()
+    var myModalEl = document.getElementById(modalId)
+    var modal = bootstrap.Modal.getInstance(myModalEl) 
+    modal.hide();
 }

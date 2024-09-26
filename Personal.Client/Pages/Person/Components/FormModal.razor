@@ -35,6 +35,7 @@
                         }
                         else
                         {
+                            <option value="null">لطفا یک مورد انتخاب کنید</option>
                             foreach (var item in degrees)
                             {
                                 <option value="@item.Id">@item.Title</option>
@@ -74,5 +75,7 @@
     async Task OnSave()
     {
         await OnPersonCreated.InvokeAsync(person);
+        await JSRuntime.InvokeVoidAsync("CloseModal", modalId);
+        person = new();
     }
 }

@@ -69,7 +69,7 @@ else
                     <td>@person.Degree?.Title</td>
                     <td>1377/03/01</td>
                     <td><button class="btn btn-warning ">ویرایش</button></td>
-                    <td><button class="btn btn-danger ">حذف</button></td>
+                    <td><button class="btn btn-danger " @onclick=@(async () =>{await Delete(person.Id);})>حذف</button></td>
                 </tr>
             }
         </tbody>
@@ -78,8 +78,15 @@ else
 
 @code {
     private PersonDtoSelect[]? personal;
-    FormModal formModal; 
+    FormModal formModal;
+    [Inject] IJSRuntime jSRuntime { get; set; }
+
     protected override async Task OnInitializedAsync()
+    {
+        await GetAllPersonal();
+    }
+
+    async Task GetAllPersonal()
     {
         personal = await personService.GetAll();
     }
@@ -89,8 +96,28 @@ else
         await formModal.OpenModal();
     }
 
+    async Task CloseModal()
+    {
+        
+    }
+
+    async Task Delete(Guid id)
+    {
+        await personService.Delete(id);
+        await GetAllPersonal();
+        await ShowMessage("حذف", "حذف با موفقیت انجام شد");
+    }
+
     async Task OnPersonGet(PersonDto person)
     {
         await personService.Add(person);
+        await GetAllPersonal();
+        await ShowMessage("ذخیره", "ذخیره با موفقیت انجام شد");
+
+    }
+
+    async Task ShowMessage(string title,string message)
+    {
+        await jSRuntime.InvokeVoidAsync("ShowAlert",title,message);
     }
 }
