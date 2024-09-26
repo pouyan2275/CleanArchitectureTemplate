@@ -21,6 +21,9 @@ else
                 <th>کد ملی</th>
                 <th>آخرین مدرک تحصیلی</th>
                 <th>تاریخ تولد</th>
+                <th>حذف</th>
+                <th>ویرایش</th>
+
             </tr>
         </thead>
         <tbody>
@@ -31,6 +34,8 @@ else
                     <td>@person.Family</td>
                     <td>@person.NationalCode</td>
                     <td>@person.Degree?.Title</td>
+                    <td><button class="btn btn-primary">ویرایش</button></td>
+                    <td><button class="btn btn-danger">حذف</button></td>
                     <td></td>
                 </tr>
             }
@@ -39,7 +44,6 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
     private PersonDtoSelect[]? persons;
 
     protected override async Task OnInitializedAsync()
