@@ -1,7 +1,12 @@
 ﻿@page "/"
+@using Personal.Client.Pages.Person.Components
+@using Personal.Client.Services.Implements
+@using Personal.Shared.Dtos.Persons
 @inject HttpClient Http
-
+@inject PersonService personService
 <PageTitle>داشبورد</PageTitle>
+<FormModal @ref=formModal OnPersonCreated="OnPersonGet"/>
+
 <div class="flex-column h-25 w-100 mb-2 bg-gray rounded px-2">
     <h3>جستجو</h3>
     <div class="d-flex flex-wrap">
@@ -33,7 +38,7 @@
     </div>
 </div>
 <hr />
-<button class="btn btn-success"> افزودن</button>
+<button class="btn btn-success" @onclick=OpenAddModal> افزودن</button>
 
 @if (personal == null)
 {
@@ -64,7 +69,7 @@ else
                     <td>@person.Degree?.Title</td>
                     <td>1377/03/01</td>
                     <td><button class="btn btn-warning ">ویرایش</button></td>
-                    <td><button class="btn btn-danger">حذف</button></td>
+                    <td><button class="btn btn-danger ">حذف</button></td>
                 </tr>
             }
         </tbody>
@@ -73,51 +78,19 @@ else
 
 @code {
     private PersonDtoSelect[]? personal;
-
+    FormModal formModal; 
     protected override async Task OnInitializedAsync()
     {
-        
-        // forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
-        personal = await Http.GetFromJsonAsync<PersonDtoSelect[]>("api/Person");
-        Console.WriteLine(personal);
-
+        personal = await personService.GetAll();
     }
 
-    public class WeatherForecast
+    async Task OpenAddModal()
     {
-        public DateOnly Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string? Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        await formModal.OpenModal();
     }
 
-    public class PersonDtoSelect
+    async Task OnPersonGet(PersonDto person)
     {
-        public string? Name { get; set; }
-        public string? Family { get; set; }
-        public string? NationalCode { get; set; }
-        public Guid Id { get; set; }
-        public Guid? DegreeId { get; set; }
-        public Degree? Degree { get; set; }
-    }
-    public class PersonDto
-    {
-        public string? Name { get; set; }
-        public string? Family { get; set; }
-        public string? NationalCode { get; set; }
-        public Guid? DegreeId { get; set; }
-    }
-    public class Degree 
-    {
-        public string? Title { get; set; }
-        public int? Index { get; set; }
-        public Guid Id { get; set; }
-        public Guid? CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public Guid? ModifiedBy { get; set; }
-        public DateTime? ModifiedOn { get; set; }
+        await personService.Add(person);
     }
 }

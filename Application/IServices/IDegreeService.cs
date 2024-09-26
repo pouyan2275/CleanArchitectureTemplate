@@ -1,6 +1,4 @@
-﻿using Application.Bases.Dtos.Paginations;
-using Application.Bases.Interfaces.IServices;
-using Application.Dtos.Categories;
+﻿using Application.Bases.Interfaces.IServices;
 using Application.Dtos.Degrees;
 using Domain.Entities;
 

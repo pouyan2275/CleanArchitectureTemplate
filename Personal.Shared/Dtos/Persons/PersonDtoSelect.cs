@@ -1,7 +1,7 @@
 ﻿
-using Application.Dtos.Degrees;
+using Personal.Shared.Dtos.Degrees;
 
-namespace Application.Dtos.Persons;
+namespace Personal.Shared.Dtos.Persons;
 
 public class PersonDtoSelect
 {

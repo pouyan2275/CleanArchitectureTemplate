@@ -16,8 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Interfaces\" />
-    <Folder Include="Services\Implements\" />
+    <ProjectReference Include="..\Personal.Shared\Personal.Shared.csproj" />
   </ItemGroup>
 
 </Project>

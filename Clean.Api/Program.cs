@@ -23,6 +23,8 @@ app.MapControllers();
 app.UseCors(o =>
 {
     o.AllowAnyOrigin();
+    o.AllowAnyMethod();
+    o.AllowAnyHeader();
 });
 
 app.Run();

@@ -1,0 +1,78 @@
+﻿@using Personal.Client.Pages.BaseComponents
+@using Personal.Client.Services.Implements
+@using Personal.Shared.Dtos.Degrees
+@using Personal.Shared.Dtos.Persons
+@inject DegreeService degreeService
+
+<div class="modal fade" id="@modalId" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">مدیریت اشخاص</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                <label class="form-label">نام</label>
+                <input class="form-control" @bind=person.Name />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">نام خانوادگی</label>
+                    <input class="form-control" @bind=person.Family />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">کد ملی</label>
+                    <input class="form-control" @bind=person.NationalCode />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">آخرین مدرک تحصیلی</label>
+                    <select class="form-select" @bind=person.DegreeId>
+                        @if (degrees.Count == 0)
+                        {
+                            <option>
+                                <SpinnerComponent />
+                            </option>
+                        }
+                        else
+                        {
+                            foreach (var item in degrees)
+                            {
+                                <option value="@item.Id">@item.Title</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                <button type="button" class="btn btn-primary" @onclick="OnSave">ذخیره</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    string modalId = Guid.NewGuid().ToString();
+    PersonDto person = new();
+    List<DegreeDtoSelect> degrees = new();
+    [Parameter] public EventCallback<PersonDto> OnPersonCreated { get; set; }
+    [Inject] public IJSRuntime JSRuntime { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        degrees = await degreeService.GetAll();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task OpenModal()
+    {
+        await JSRuntime.InvokeVoidAsync("OpenModal",modalId);
+
+    }
+
+    async Task OnSave()
+    {
+        await OnPersonCreated.InvokeAsync(person);
+    }
+}

@@ -1,11 +1,8 @@
 ﻿using Api.Bases.Controllers;
-using Application.Bases.Dtos.Paginations;
-using Application.Dtos.Categories;
+using Application.Dtos.Persons;
 using Application.IServices;
-using Application.Services;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
-using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers

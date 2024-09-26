@@ -1,5 +1,5 @@
 ﻿
-namespace Application.Dtos.Persons;
+namespace Personal.Shared.Dtos.Persons;
 
 public class PersonDto
 {
