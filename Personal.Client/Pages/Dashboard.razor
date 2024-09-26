@@ -1,0 +1,91 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<PageTitle>داشبورد</PageTitle>
+
+<button class="btn btn-success"> اضافه کردن</button>
+<button class="btn btn-primary">ویرایش</button>
+<button class="btn btn-danger">حذف</button>
+
+@if (persons == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>نام</th>
+                <th>نام خانوادگی</th>
+                <th>کد ملی</th>
+                <th>آخرین مدرک تحصیلی</th>
+                <th>تاریخ تولد</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var person in persons)
+            {
+                <tr>
+                    <td>@person.Name</td>
+                    <td>@person.Family</td>
+                    <td>@person.NationalCode</td>
+                    <td>@person.Degree?.Title</td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+    private PersonDtoSelect[]? persons;
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        // forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        persons = await Http.GetFromJsonAsync<PersonDtoSelect[]>("api/Person");
+        Console.WriteLine(persons);
+
+    }
+
+    public class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string? Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+
+    public class PersonDtoSelect
+    {
+        public string? Name { get; set; }
+        public string? Family { get; set; }
+        public string? NationalCode { get; set; }
+        public Guid Id { get; set; }
+        public Guid? DegreeId { get; set; }
+        public Degree? Degree { get; set; }
+    }
+    public class PersonDto
+    {
+        public string? Name { get; set; }
+        public string? Family { get; set; }
+        public string? NationalCode { get; set; }
+        public Guid? DegreeId { get; set; }
+    }
+    public class Degree 
+    {
+        public string? Title { get; set; }
+        public int? Index { get; set; }
+        public Guid Id { get; set; }
+        public Guid? CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public Guid? ModifiedBy { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+    }
+}
