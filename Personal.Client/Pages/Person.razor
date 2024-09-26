@@ -2,14 +2,42 @@
 @inject HttpClient Http
 
 <PageTitle>داشبورد</PageTitle>
+<div class="flex-column h-25 w-100 mb-2 bg-gray rounded px-2">
+    <h3>جستجو</h3>
+    <div class="d-flex flex-wrap">
+        <div class="m-2">
+            <label>نام</label>
+            <input class="form-control" type="text" name="name" value="" />
+        </div>
+        <div class="m-2">
+            <label>نام خانوادگی</label>
+            <input class="form-control " type="text" name="name" value="" />
+        </div>
+        <div class="m-2">
+            <label>کد ملی</label>
+            <input class="form-control " type="text" name="name" value="" />
+        </div>
+        
+        <div class="m-2">
+            <label>آخرین مدرک تحصیلی</label>
+            <input class="form-control " type="text" name="name" value="" />
+        </div>
 
-<button class="btn btn-success"> اضافه کردن</button>
-<button class="btn btn-primary">ویرایش</button>
-<button class="btn btn-danger">حذف</button>
+        <div class="m-2">
+            <label>تاریخ تولد</label>
+            <input class="form-control " type="date" name="name" value="" />
+        </div>
+        <div class=" align-content-end m-2">
+            <button class="btn btn-primary px-xxl-5">جستجو</button>
+        </div>
+    </div>
+</div>
+<hr />
+<button class="btn btn-success"> افزودن</button>
 
-@if (persons == null)
+@if (personal == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>درحال بارگذاری...</em></p>
 }
 else
 {
@@ -21,22 +49,22 @@ else
                 <th>کد ملی</th>
                 <th>آخرین مدرک تحصیلی</th>
                 <th>تاریخ تولد</th>
-                <th>حذف</th>
                 <th>ویرایش</th>
+                <th>حذف</th>
 
             </tr>
         </thead>
         <tbody>
-            @foreach (var person in persons)
+            @foreach (var person in personal)
             {
                 <tr>
                     <td>@person.Name</td>
                     <td>@person.Family</td>
                     <td>@person.NationalCode</td>
                     <td>@person.Degree?.Title</td>
-                    <td><button class="btn btn-primary">ویرایش</button></td>
+                    <td>1377/03/01</td>
+                    <td><button class="btn btn-warning ">ویرایش</button></td>
                     <td><button class="btn btn-danger">حذف</button></td>
-                    <td></td>
                 </tr>
             }
         </tbody>
@@ -44,14 +72,14 @@ else
 }
 
 @code {
-    private PersonDtoSelect[]? persons;
+    private PersonDtoSelect[]? personal;
 
     protected override async Task OnInitializedAsync()
     {
         
         // forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
-        persons = await Http.GetFromJsonAsync<PersonDtoSelect[]>("api/Person");
-        Console.WriteLine(persons);
+        personal = await Http.GetFromJsonAsync<PersonDtoSelect[]>("api/Person");
+        Console.WriteLine(personal);
 
     }
 

@@ -101,3 +101,9 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+
+/*Custom Css*/
+
+.bg-gray {
+    background: #3333332e;
+}
