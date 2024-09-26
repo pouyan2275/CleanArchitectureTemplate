@@ -1,5 +1,6 @@
 ﻿
 
+using Personal.Shared.Dtos.Paginations;
 using Personal.Shared.Dtos.Persons;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
@@ -16,9 +17,9 @@ public class PersonService
         _httpClient = httpClient;
     }
 
-    public async Task<PersonDtoSelect[]?> GetAll()
+    public async Task<List<PersonDtoSelect>> GetAll()
     {
-        return await _httpClient.GetFromJsonAsync<PersonDtoSelect[]>(_address);
+        return await _httpClient.GetFromJsonAsync<List<PersonDtoSelect>>(_address) ?? new();
     }
     public async Task<PersonDtoSelect?> GetById(Guid id)
     {
@@ -28,12 +29,19 @@ public class PersonService
     {
         await _httpClient.PostAsJsonAsync<PersonDto>($"{_address}",person);
     }
-    public async Task<PersonDtoSelect?> Edit(Guid id)
+    public async Task Update(Guid id,PersonDto person)
     {
-        return await _httpClient.GetFromJsonAsync<PersonDtoSelect>($"{_address}/{id}");
+        await _httpClient.PutAsJsonAsync($"{_address}/{id}",person);
     }
     public async Task Delete (Guid id)
     {
         await _httpClient.DeleteAsync($"{_address}/{id}");
+    }
+
+    public async Task<PaginationDtoSelect<PersonDtoSelect>> Pagination(PaginationDto filterParams)
+    {
+        var response = await _httpClient.PostAsJsonAsync(_address+"/pagination", filterParams);
+        var result = await response.Content.ReadFromJsonAsync<PaginationDtoSelect<PersonDtoSelect>>();
+        return result ?? new();
     }
 }

@@ -1,11 +1,13 @@
 ﻿@page "/"
+@using Personal.Client.Pages.BaseComponents
 @using Personal.Client.Pages.Person.Components
 @using Personal.Client.Services.Implements
+@using Personal.Shared.Dtos.Paginations
 @using Personal.Shared.Dtos.Persons
 @inject HttpClient Http
 @inject PersonService personService
 <PageTitle>داشبورد</PageTitle>
-<FormModal @ref=formModal OnPersonCreated="OnPersonGet"/>
+<FormModal @ref=formModal OnPersonCreated="OnPersonCreated" OnPersonUpdated="OnPersonUpdated" />
 
 <div class="flex-column h-25 w-100 mb-2 bg-gray rounded px-2">
     <h3>جستجو</h3>
@@ -39,10 +41,11 @@
 </div>
 <hr />
 <button class="btn btn-success" @onclick=OpenAddModal> افزودن</button>
+<hr />
 
 @if (personal == null)
 {
-    <p><em>درحال بارگذاری...</em></p>
+    <SpinnerComponent/>
 }
 else
 {
@@ -68,8 +71,8 @@ else
                     <td>@person.NationalCode</td>
                     <td>@person.Degree?.Title</td>
                     <td>1377/03/01</td>
-                    <td><button class="btn btn-warning ">ویرایش</button></td>
-                    <td><button class="btn btn-danger " @onclick=@(async () =>{await Delete(person.Id);})>حذف</button></td>
+                    <td><button class="btn btn-warning" @onclick=@(async () =>{await OpenEditModal(person);})>ویرایش</button></td>
+                    <td><button class="btn btn-danger" @onclick=@(async () =>{await Delete(person.Id);})>حذف</button></td>
                 </tr>
             }
         </tbody>
@@ -77,10 +80,10 @@ else
 }
 
 @code {
-    private PersonDtoSelect[]? personal;
+    List<PersonDtoSelect> personal;
     FormModal formModal;
     [Inject] IJSRuntime jSRuntime { get; set; }
-
+    PaginationDto filterParam = new PaginationDto();
     protected override async Task OnInitializedAsync()
     {
         await GetAllPersonal();
@@ -96,9 +99,17 @@ else
         await formModal.OpenModal();
     }
 
-    async Task CloseModal()
+    async Task OpenEditModal(PersonDtoSelect selectedRow)
     {
-        
+        var person = new PersonDto
+        {
+            Id = selectedRow.Id,
+            DegreeId = selectedRow.DegreeId,
+            Family = selectedRow.Family,
+            Name = selectedRow.Name,
+            NationalCode = selectedRow.NationalCode
+        };
+        await formModal.OpenModal(person);
     }
 
     async Task Delete(Guid id)
@@ -108,11 +119,18 @@ else
         await ShowMessage("حذف", "حذف با موفقیت انجام شد");
     }
 
-    async Task OnPersonGet(PersonDto person)
+    async Task OnPersonCreated(PersonDto person)
     {
         await personService.Add(person);
         await GetAllPersonal();
         await ShowMessage("ذخیره", "ذخیره با موفقیت انجام شد");
+    }
+
+    async Task OnPersonUpdated(PersonDto person)
+    {
+        await personService.Update(person.Id,person);
+        await GetAllPersonal();
+        await ShowMessage("ویرایش", "ویرایش با موفقیت انجام شد");
 
     }
 

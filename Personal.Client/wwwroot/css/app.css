@@ -107,3 +107,13 @@ code {
 .bg-gray {
     background: #3333332e;
 }
+body {
+    background: #333333f7;
+    color:#fff
+}
+.table > :not(caption) > * > *{
+    color:#fff
+}
+.bg-dark{
+    background:#333;
+}

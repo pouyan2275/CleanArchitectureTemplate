@@ -16,22 +16,10 @@ public class DegreeService
     public async Task<List<DegreeDtoSelect>> GetAll()
     {
         var result = await _httpClient.GetFromJsonAsync<List<DegreeDtoSelect>>(_address);
-        return result ?? new();
+        return result ?? [];
     }
     public async Task<DegreeDtoSelect?> GetById(Guid id)
     {
         return await _httpClient.GetFromJsonAsync<DegreeDtoSelect>($"{_address}/{id}");
-    }
-    public async Task<DegreeDtoSelect?> Add(Guid id)
-    {
-        return await _httpClient.GetFromJsonAsync<DegreeDtoSelect>($"{_address}/{id}");
-    }
-    public async Task<DegreeDtoSelect?> Edit(Guid id)
-    {
-        return await _httpClient.GetFromJsonAsync<DegreeDtoSelect>($"{_address}/{id}");
-    }
-    public async Task Delete (Guid id)
-    {
-        await _httpClient.DeleteAsync($"{_address}/{id}");
     }
 }

@@ -1,12 +1,13 @@
 ﻿@using Personal.Client.Pages.BaseComponents
 @using Personal.Client.Services.Implements
 @using Personal.Shared.Dtos.Degrees
+@using Personal.Shared.Dtos.Paginations
 @using Personal.Shared.Dtos.Persons
 @inject DegreeService degreeService
 
 <div class="modal fade" id="@modalId" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content bg-dark">
             <div class="modal-header">
                 <h5 class="modal-title">مدیریت اشخاص</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -22,7 +23,10 @@
                 </div>
                 <div class="mb-2">
                     <label class="form-label">کد ملی</label>
-                    <input class="form-control" @bind=person.NationalCode />
+                    <input class="form-control  @nationalCodeValidation" aria-describedby="validationServer05Feedback" required @onfocusout=CheckNationalCode @bind=person.NationalCode />
+                    <div id="validationServer05Feedback" class="invalid-feedback">
+                        این کد ملی برای شخص دیگری ثبت شده
+                    </div>
                 </div>
                 <div class="mb-2">
                     <label class="form-label">آخرین مدرک تحصیلی</label>
@@ -46,7 +50,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
-                <button type="button" class="btn btn-primary" @onclick="OnSave">ذخیره</button>
+                <button type="button" class="btn btn-primary" @onclick="OnSave" disabled=@disableSave>ذخیره</button>
             </div>
         </div>
     </div>
@@ -54,28 +58,96 @@
 
 
 @code {
+    enum ModelJob
+    {
+        Add,
+        Edit
+    }
+    ModelJob modelJob;
+    PaginationDto filterParam;
     string modalId = Guid.NewGuid().ToString();
     PersonDto person = new();
+    string nationalCodeValidation = "";
+    string? personNationalCode;
+    bool disableSave = true;
     List<DegreeDtoSelect> degrees = new();
     [Parameter] public EventCallback<PersonDto> OnPersonCreated { get; set; }
+    [Parameter] public EventCallback<PersonDto> OnPersonUpdated { get; set; }
     [Inject] public IJSRuntime JSRuntime { get; set; }
-
+    [Inject] public PersonService personService { get; set; }
     protected override async Task OnInitializedAsync()
     {
         degrees = await degreeService.GetAll();
-        await InvokeAsync(StateHasChanged);
+        await JSRuntime.InvokeVoidAsync("FormValidation");
+
     }
 
     public async Task OpenModal()
     {
-        await JSRuntime.InvokeVoidAsync("OpenModal",modalId);
+        modelJob = ModelJob.Add;
+        await JSRuntime.InvokeVoidAsync("OpenFormModal",modalId);
+        personNationalCode = "";
+    }
+
+
+    public async Task OpenModal(PersonDto personDto)
+    {
+        modelJob = ModelJob.Edit;
+        person = personDto;
+        personNationalCode = personDto.NationalCode;
+        await JSRuntime.InvokeVoidAsync("OpenFormModal", modalId);
+
+    }
+
+    public async Task CheckNationalCode()
+    {
+        if (person.NationalCode == null || personNationalCode == null || personNationalCode == person.NationalCode)
+        {
+            disableSave = false;
+            nationalCodeValidation = "is-valid";
+            return;    
+        }
+
+        filterParam = new();
+        filterParam.Filter = new()
+        {
+            new FilterPagination
+            {
+                Key = "NationalCode",
+                Operator = FilterOperator.Equal,
+                Value = person.NationalCode
+            }
+        };
+        var result = await personService.Pagination(filterParam);
+        if(result.Data.Count > 0)
+        {
+            nationalCodeValidation = "is-invalid";
+            disableSave = true;
+        }
+        else
+        {
+            nationalCodeValidation = "is-valid";
+            disableSave = false;
+
+        }
 
     }
 
     async Task OnSave()
     {
-        await OnPersonCreated.InvokeAsync(person);
-        await JSRuntime.InvokeVoidAsync("CloseModal", modalId);
+        switch (modelJob)
+        {
+            case ModelJob.Add:
+                await OnPersonCreated.InvokeAsync(person);
+                break;
+            case ModelJob.Edit:
+                await OnPersonUpdated.InvokeAsync(person);
+                break;
+            default:
+                break;
+
+        }
+        await JSRuntime.InvokeVoidAsync("CloseFormModal", modalId);
         person = new();
     }
 }

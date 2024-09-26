@@ -1,9 +1,15 @@
-﻿function OpenModal(modalId) {
+﻿function FormValidation() {
+    console.log("ss")
+}
+function OpenFormModal(modalId) {
     var myModal = new bootstrap.Modal(document.getElementById(modalId))
     myModal.show()
 }
-function CloseModal(modalId) {
+function CloseFormModal(modalId) {
     var myModalEl = document.getElementById(modalId)
     var modal = bootstrap.Modal.getInstance(myModalEl) 
     modal.hide();
 }
+
+
+

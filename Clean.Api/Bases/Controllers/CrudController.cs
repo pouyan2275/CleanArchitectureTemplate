@@ -96,7 +96,7 @@ public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
     /// <param name="pagination"></param>
     /// <returns></returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<TDtoSelect>> Pagination(PaginationDto pagination,CancellationToken ct = default)
+    public async Task<ActionResult<PaginationDtoSelect<TDtoSelect>>> Pagination(PaginationDto pagination,CancellationToken ct = default)
     {
         var result = await _crudService.PaginationAsync(pagination,ct: ct);
         return Ok(result);
