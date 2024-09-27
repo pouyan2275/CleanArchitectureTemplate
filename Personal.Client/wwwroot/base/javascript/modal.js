@@ -1,7 +1,4 @@
-﻿function FormValidation() {
-    console.log("ss")
-}
-function OpenFormModal(modalId) {
+﻿function OpenFormModal(modalId) {
     var myModal = new bootstrap.Modal(document.getElementById(modalId))
     myModal.show()
 }

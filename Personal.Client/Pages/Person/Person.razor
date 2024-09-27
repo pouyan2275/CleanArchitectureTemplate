@@ -1,44 +1,10 @@
 ﻿@page "/"
-@using Personal.Client.Pages.BaseComponents
 @using Personal.Client.Pages.Person.Components
-@using Personal.Client.Services.Implements
-@using Personal.Shared.Dtos.Paginations
-@using Personal.Shared.Dtos.Persons
-@inject HttpClient Http
-@inject PersonService personService
+
 <PageTitle>داشبورد</PageTitle>
 <FormModal @ref=formModal OnPersonCreated="OnPersonCreated" OnPersonUpdated="OnPersonUpdated" />
 
-<div class="flex-column h-25 w-100 mb-2 bg-gray rounded px-2">
-    <h3>جستجو</h3>
-    <div class="d-flex flex-wrap">
-        <div class="m-2">
-            <label>نام</label>
-            <input class="form-control" type="text" name="name" value="" />
-        </div>
-        <div class="m-2">
-            <label>نام خانوادگی</label>
-            <input class="form-control " type="text" name="name" value="" />
-        </div>
-        <div class="m-2">
-            <label>کد ملی</label>
-            <input class="form-control " type="text" name="name" value="" />
-        </div>
-        
-        <div class="m-2">
-            <label>آخرین مدرک تحصیلی</label>
-            <input class="form-control " type="text" name="name" value="" />
-        </div>
-
-        <div class="m-2">
-            <label>تاریخ تولد</label>
-            <input class="form-control " type="date" name="name" value="" />
-        </div>
-        <div class=" align-content-end m-2">
-            <button class="btn btn-primary px-xxl-5">جستجو</button>
-        </div>
-    </div>
-</div>
+<SearchComponent @ref=searchComponent OnSearchResult="OnSearchResult" />
 <hr />
 <button class="btn btn-success" @onclick=OpenAddModal> افزودن</button>
 <hr />
@@ -56,7 +22,6 @@ else
                 <th>نام خانوادگی</th>
                 <th>کد ملی</th>
                 <th>آخرین مدرک تحصیلی</th>
-                <th>تاریخ تولد</th>
                 <th>ویرایش</th>
                 <th>حذف</th>
 
@@ -70,7 +35,6 @@ else
                     <td>@person.Family</td>
                     <td>@person.NationalCode</td>
                     <td>@person.Degree?.Title</td>
-                    <td>1377/03/01</td>
                     <td><button class="btn btn-warning" @onclick=@(async () =>{await OpenEditModal(person);})>ویرایش</button></td>
                     <td><button class="btn btn-danger" @onclick=@(async () =>{await Delete(person.Id);})>حذف</button></td>
                 </tr>
@@ -79,63 +43,3 @@ else
     </table>
 }
 
-@code {
-    List<PersonDtoSelect> personal;
-    FormModal formModal;
-    [Inject] IJSRuntime jSRuntime { get; set; }
-    PaginationDto filterParam = new PaginationDto();
-    protected override async Task OnInitializedAsync()
-    {
-        await GetAllPersonal();
-    }
-
-    async Task GetAllPersonal()
-    {
-        personal = await personService.GetAll();
-    }
-
-    async Task OpenAddModal()
-    {
-        await formModal.OpenModal();
-    }
-
-    async Task OpenEditModal(PersonDtoSelect selectedRow)
-    {
-        var person = new PersonDto
-        {
-            Id = selectedRow.Id,
-            DegreeId = selectedRow.DegreeId,
-            Family = selectedRow.Family,
-            Name = selectedRow.Name,
-            NationalCode = selectedRow.NationalCode
-        };
-        await formModal.OpenModal(person);
-    }
-
-    async Task Delete(Guid id)
-    {
-        await personService.Delete(id);
-        await GetAllPersonal();
-        await ShowMessage("حذف", "حذف با موفقیت انجام شد");
-    }
-
-    async Task OnPersonCreated(PersonDto person)
-    {
-        await personService.Add(person);
-        await GetAllPersonal();
-        await ShowMessage("ذخیره", "ذخیره با موفقیت انجام شد");
-    }
-
-    async Task OnPersonUpdated(PersonDto person)
-    {
-        await personService.Update(person.Id,person);
-        await GetAllPersonal();
-        await ShowMessage("ویرایش", "ویرایش با موفقیت انجام شد");
-
-    }
-
-    async Task ShowMessage(string title,string message)
-    {
-        await jSRuntime.InvokeVoidAsync("ShowAlert",title,message);
-    }
-}

@@ -3,7 +3,6 @@
 using Personal.Shared.Dtos.Paginations;
 using Personal.Shared.Dtos.Persons;
 using System.Net.Http.Json;
-using System.Text.Json.Serialization;
 
 namespace Personal.Client.Services.Implements;
 

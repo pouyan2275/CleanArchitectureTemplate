@@ -1,0 +1,40 @@
+﻿<div class="flex-column h-25 w-100 mb-2 bg-gray rounded px-2">
+    <h3>جستجو</h3>
+    <div class="d-flex flex-wrap">
+        <div class="m-2">
+            <label>نام</label>
+            <input class="form-control" type="text" @bind=person.Name />
+        </div>
+        <div class="m-2">
+            <label>نام خانوادگی</label>
+            <input class="form-control " type="text" @bind=person.Family />
+        </div>
+        <div class="m-2">
+            <label>کد ملی</label>
+            <input class="form-control " type="text" @bind=person.NationalCode />
+        </div>
+
+        <div class="m-2">
+            <label>آخرین مدرک تحصیلی</label>
+            <select class="form-select" @bind=person.DegreeId>
+                @if (degrees.Count == 0)
+                {
+                    <SpinnerComponent />
+                }
+                else
+                {
+                    <option value="@defaultGuid">هیچکدام</option>
+                    foreach (var item in degrees)
+                    {
+                        <option value="@item.Id">@item.Title</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class=" align-content-end m-2">
+            <button class="btn btn-primary px-xxl-5" @onclick=SearchClicked>جستجو</button>
+        </div>
+    </div>
+</div>
+
