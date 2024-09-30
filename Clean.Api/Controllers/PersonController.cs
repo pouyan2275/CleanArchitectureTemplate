@@ -19,5 +19,12 @@ namespace Api.Controllers
             _personService = personService;
             _repository = repository;
         }
+        [HttpGet("[action]")]
+        public void test()
+        {
+            var person = new Person();
+            var a = person.GetType().GetProperty("ss").GetValue(person);
+            var c = a + person.ToString();
+        }
     }
 }
