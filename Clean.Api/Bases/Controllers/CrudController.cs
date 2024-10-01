@@ -33,7 +33,20 @@ public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
     [HttpGet("{id}")]
     public virtual async Task<ActionResult<TDtoSelect?>> GetById(Guid id, CancellationToken ct = default)
     {
-        var result = (await _crudService.GetByIdAsync(id, ct)).Adapt<TDtoSelect>();
+        var result = await _crudService.GetByIdAsync(id, ct);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Get by id with relations
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="ct"></param>
+    /// <returns></returns>
+    [HttpGet("[action]/{id}")]
+    public virtual async Task<ActionResult<TDtoSelect?>> GetByIdWithRelations(Guid id, CancellationToken ct = default)
+    {
+        var result = await _crudService.GetByIdEagleLoadingAsync(id, ct);
         return Ok(result);
     }
 
@@ -46,7 +59,20 @@ public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
     public virtual async Task<ActionResult<List<TDtoSelect>>> GetAll(CancellationToken ct = default)
     {
        
-        var result = (await _crudService.GetAllAsync(ct)).Adapt<List<TDtoSelect>>();
+        var result = await _crudService.GetAllAsync(ct);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Get all with relations
+    /// </summary>
+    /// <param name="ct"></param>
+    /// <returns></returns>
+    [HttpGet("[action]")]
+    public virtual async Task<ActionResult<List<TDtoSelect>>> GetAllWithRelations(CancellationToken ct = default)
+    {
+
+        var result = await _crudService.GetAllEagleLoadingAsync(ct);
         return Ok(result);
     }
 

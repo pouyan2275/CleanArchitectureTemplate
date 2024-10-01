@@ -91,9 +91,6 @@ public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSel
     {
         var table = _repository.TableNoTracking;
 
-        paginationDto.PageNumber = paginationDto.PageNumber <= 0 ? 1 : paginationDto.PageNumber;
-        paginationDto.PageSize = paginationDto.PageSize <= 0 ? int.MaxValue : paginationDto.PageSize;
-
         if (paginationDto?.Filter?.Count > 0)
         {
             var filterString = "x => ";
