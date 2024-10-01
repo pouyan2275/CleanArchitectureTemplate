@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Bases.Models.SortParams;
+﻿namespace Domain.Bases.Models.SortParams;
 
 public class SortParam
 {

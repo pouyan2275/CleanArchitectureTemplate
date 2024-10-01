@@ -1,5 +1,5 @@
-﻿using Infrastructure.Bases.Models.FilterParams;
-using Infrastructure.Bases.Models.SortParams;
+﻿using Domain.Bases.Models.FilterParams;
+using Domain.Bases.Models.SortParams;
 using System.ComponentModel;
 
 namespace Application.Bases.Dtos.Paginations

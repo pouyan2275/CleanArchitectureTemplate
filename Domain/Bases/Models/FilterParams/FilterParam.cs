@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Infrastructure.Bases.Models.FilterParams;
+namespace Domain.Bases.Models.FilterParams;
 
 public class FilterParam
 {

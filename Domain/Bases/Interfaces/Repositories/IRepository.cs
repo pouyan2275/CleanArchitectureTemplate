@@ -1,4 +1,6 @@
 ﻿using Domain.Bases.Interfaces.Entities;
+using Domain.Bases.Models.FilterParams;
+using Domain.Bases.Models.SortParams;
 
 namespace Domain.Bases.Interfaces.Repositories
 {
@@ -18,6 +20,27 @@ namespace Domain.Bases.Interfaces.Repositories
         public Task AddAsync(TEntity Tentity, bool save = true, CancellationToken ct = default);
         public Task UpdateAsync(TEntity Tentity, bool save = true, CancellationToken ct = default);
         public Task DeleteAsync(TEntity entity, bool save = true, CancellationToken ct = default);
+        public Task<List<TEntity>> PaginationAsync(List<FilterParam>? filterParams, 
+            List<SortParam>? sortParams, 
+            int pageNumber = 1, 
+            int pageSize = int.MaxValue,
+            CancellationToken ct = default);
+        public Task<List<TDestination>> PaginationAsync<TDestination>(List<FilterParam>? filterParams,
+            List<SortParam>? sortParams,
+            int pageNumber = 1,
+            int pageSize = int.MaxValue,
+            CancellationToken ct = default);
+        public Task<List<TEntity>> PaginationEagleLoadingAsync(List<FilterParam>? filterParams,
+            List<SortParam>? sortParams,
+            int pageNumber = 1,
+            int pageSize = int.MaxValue,
+            CancellationToken ct = default);
+        public Task<List<TDestination>> PaginationEagleLoadingAsync<TDestination>(List<FilterParam>? filterParams,
+            List<SortParam>? sortParams,
+            int pageNumber = 1,
+            int pageSize = int.MaxValue,
+            CancellationToken ct = default);
+
         public Task SaveChangesAsync(CancellationToken ct = default);
     }
 }

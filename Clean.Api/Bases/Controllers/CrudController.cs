@@ -124,4 +124,16 @@ public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
         var result = await _crudService.PaginationAsync(pagination,ct: ct);
         return Ok(result);
     }
+
+    /// <summary>
+    /// PaginationEagleLoadingAsync
+    /// </summary>
+    /// <param name="pagination"></param>
+    /// <returns></returns>
+    [HttpPost("[action]")]
+    public async Task<ActionResult<PaginationDtoSelect<TDtoSelect>>> PaginationEagleLoading(PaginationDto pagination, CancellationToken ct = default)
+    {
+        var result = await _crudService.PaginationEagleLoadingAsync(pagination, ct: ct);
+        return Ok(result);
+    }
 }

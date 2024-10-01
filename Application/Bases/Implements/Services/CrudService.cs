@@ -88,11 +88,20 @@ public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSel
 
     public async Task<PaginationDtoSelect<TDtoSelect>> PaginationAsync(PaginationDto dto,CancellationToken ct = default)
     {
-        var table = _repository.TableNoTracking;
 
-        table = table.Filter(dto.Filter).Sort(dto.Sort).Page(dto.PageNumber,dto.PageSize);
+        var result = await _repository.PaginationAsync<TDtoSelect>(dto.Filter, dto.Sort, dto.PageNumber, dto.PageSize, ct);
 
-        var result = await table.ProjectToType<TDtoSelect>().ToListAsync(ct);
+        var paginationDtoSelect = new PaginationDtoSelect<TDtoSelect>()
+        {
+            Count = result.Count,
+            Data = result
+        };
+        return paginationDtoSelect;
+    }
+    public async Task<PaginationDtoSelect<TDtoSelect>> PaginationEagleLoadingAsync(PaginationDto dto, CancellationToken ct = default)
+    {
+
+        var result = await _repository.PaginationEagleLoadingAsync<TDtoSelect>(dto.Filter, dto.Sort, dto.PageNumber, dto.PageSize, ct);
 
         var paginationDtoSelect = new PaginationDtoSelect<TDtoSelect>()
         {

@@ -12,6 +12,7 @@ namespace Application.Bases.Interfaces.IServices
         public Task UpdateAsync(Guid id, TDto Tentity, CancellationToken ct = default);
         public Task DeleteAsync(Guid id, CancellationToken ct = default);
         public Task<PaginationDtoSelect<TDtoSelect>> PaginationAsync(PaginationDto paginationDto, CancellationToken ct = default);
+        public Task<PaginationDtoSelect<TDtoSelect>> PaginationEagleLoadingAsync(PaginationDto paginationDto, CancellationToken ct = default);
     }
 
     public interface ICrudService<TDto, TEntity> : ICrudService<TDto,TDto,TEntity>
