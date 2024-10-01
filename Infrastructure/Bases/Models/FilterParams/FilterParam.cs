@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Application.Bases.Dtos.Paginations;
+namespace Infrastructure.Bases.Models.FilterParams;
 
-public class FilterPagination
+public class FilterParam
 {
     public required string Key { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]

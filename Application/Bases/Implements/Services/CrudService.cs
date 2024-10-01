@@ -3,10 +3,9 @@ using Application.Bases.Exceptions;
 using Application.Bases.Interfaces.IServices;
 using Domain.Bases.Interfaces.Entities;
 using Domain.Bases.Interfaces.Repositories;
+using Infrastructure.Bases.Data.Repositories;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using Plainquire.Page;
-using System.Linq.Dynamic.Core;
 
 namespace Application.Bases.Implements.Services;
 
@@ -87,37 +86,12 @@ public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSel
         await _repository.UpdateAsync(entity!, ct: ct);
     }
 
-    public async Task<PaginationDtoSelect<TDtoSelect>> PaginationAsync(PaginationDto paginationDto,CancellationToken ct = default)
+    public async Task<PaginationDtoSelect<TDtoSelect>> PaginationAsync(PaginationDto dto,CancellationToken ct = default)
     {
         var table = _repository.TableNoTracking;
 
-        if (paginationDto?.Filter?.Count > 0)
-        {
-            var filterString = "x => ";
+        table = table.Filter(dto.Filter).Sort(dto.Sort).Page(dto.PageNumber,dto.PageSize);
 
-            paginationDto.Filter.ForEach(x => {
-                filterString += x.Operator switch
-                {
-                    FilterOperator.Contains => $" x.{x.Key}.ToString().Contains(\"{x.Value}\") and",
-                    FilterOperator.IsNull => $" x.{x.Key} == null and",
-                    FilterOperator.NotNull => $" x.{x.Key} != null and",
-                    _ => $" x.{x.Key} {x.Operator.AttributeDescription()} \"{x.Value}\" and",
-                };
-            });
-            filterString = filterString[..(filterString.Length - 3)];
-            table = table.Where(filterString);
-        }
-
-        if (paginationDto?.Sort?.Count > 0)
-        {
-            var sortString = "";
-
-            paginationDto.Sort.ForEach(x => sortString += x.Key + (x.Desc ? " desc ," : " ,"));
-            sortString = sortString[..(sortString.Length - 1)];
-            table = table.OrderBy(sortString);
-        }
-
-        table = table.Page(paginationDto?.PageNumber, paginationDto?.PageSize);
         var result = await table.ProjectToType<TDtoSelect>().ToListAsync(ct);
 
         var paginationDtoSelect = new PaginationDtoSelect<TDtoSelect>()
@@ -127,4 +101,5 @@ public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSel
         };
         return paginationDtoSelect;
     }
+
 }

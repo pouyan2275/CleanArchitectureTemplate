@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace Application.Bases.Dtos.Paginations;
+namespace Infrastructure.Bases.Models.FilterParams;
 
 public enum FilterOperator
 {
