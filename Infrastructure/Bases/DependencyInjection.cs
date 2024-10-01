@@ -16,7 +16,8 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>((conf, option) =>
         {
             var configuration = conf.GetRequiredService<IConfiguration>();
-            option.UseSqlServer(configuration.GetConnectionString("SqlServer"));
+            option.UseSqlServer(configuration.GetConnectionString("SqlServer"),
+                dboption => dboption.EnableRetryOnFailure());
         });
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IPersonRepository, PersonRepository>();

@@ -1,5 +1,6 @@
 ﻿using Domain.Bases.Interfaces.Entities;
 using Domain.Bases.Interfaces.Repositories;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Bases.Data.Repositories;
@@ -36,9 +37,43 @@ public class Repository<TEntity> : IRepository<TEntity>
         return result;
     }
 
+    public virtual async Task<List<TDestination>> GetAllAsync<TDestination>(CancellationToken ct = default)
+    {
+        var result = (await Entity.ToListAsync(cancellationToken: ct)).Adapt<List<TDestination>>();
+        return result;
+    }
+
+    public virtual async Task<List<TDestination>> GetAllEagleLoadingAsync<TDestination>(CancellationToken ct = default)
+    {
+        var result = await Entity.ProjectToType<TDestination>().ToListAsync(cancellationToken: ct);
+        return result;
+    }
+    public virtual async Task<List<TEntity>> GetAllEagleLoadingAsync(CancellationToken ct = default)
+    {
+        var result = await Entity.ProjectToType<TEntity>().ToListAsync(cancellationToken: ct);
+        return result;
+    }
+
     public virtual async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         var record = await TableNoTracking.FirstOrDefaultAsync(x => x.Id == id, cancellationToken: ct);
+        return record;
+    }
+
+    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(Guid id, CancellationToken ct = default)
+    {
+        var record = (await TableNoTracking.FirstOrDefaultAsync(x => x.Id == id, cancellationToken: ct)).Adapt<TDestination>();
+        return record;
+    }
+
+    public virtual async Task<TDestination?> GetByIdEagleLoadingAsync<TDestination>(Guid id, CancellationToken ct = default)
+    {
+        var record = await TableNoTracking.Where(x => x.Id == id).ProjectToType<TDestination?>().FirstOrDefaultAsync(cancellationToken: ct);
+        return record;
+    }
+    public virtual async Task<TEntity?> GetByIdEagleLoadingAsync(Guid id, CancellationToken ct = default)
+    {
+        var record = await TableNoTracking.Where(x => x.Id == id).ProjectToType<TEntity?>().FirstOrDefaultAsync(cancellationToken: ct);
         return record;
     }
 
@@ -49,10 +84,9 @@ public class Repository<TEntity> : IRepository<TEntity>
             await SaveChangesAsync(ct);
     }
 
-    public virtual async Task DeleteAsync(Guid id, bool save = true, CancellationToken ct = default)
+    public virtual async Task DeleteAsync(TEntity entity, bool save = true, CancellationToken ct = default)
     {
-        var record = await GetByIdAsync(id, ct);
-        Entity.Remove(record!);
+        Entity.Remove(entity);
         await SaveChangesAsync(ct);
     }
 }

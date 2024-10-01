@@ -20,11 +20,11 @@ namespace Api.Controllers
             _repository = repository;
         }
         [HttpGet("[action]")]
-        public void test()
+        public async Task test()
         {
-            var person = new Person();
-            var a = person.GetType().GetProperty("ss").GetValue(person);
-            var c = a + person.ToString();
+            await _repository.GetByIdAsync(Guid.Parse("E1870BE3-7409-46EF-8AC0-0ADEEC59E2CF"));
+            await _repository.GetByIdEagleLoadingAsync(Guid.Parse("E1870BE3-7409-46EF-8AC0-0ADEEC59E2CF"));
+            
         }
     }
 }

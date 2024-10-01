@@ -57,11 +57,9 @@ public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
     /// <param name="ct"></param>
     /// <returns></returns>
     [HttpPost]
-    public virtual async Task<ActionResult<TDtoSelect>> Add(TDto Tentity, CancellationToken ct = default)
+    public virtual async Task Add(TDto Tentity, CancellationToken ct = default)
     {
-        var result = await _crudService.AddAsync(Tentity, ct);
-
-        return Ok(result);
+        await _crudService.AddAsync(Tentity, ct);
     }
 
     /// <summary>
@@ -72,10 +70,9 @@ public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
     /// <param name="ct"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public virtual async Task<ActionResult<TDtoSelect>> Update(Guid id, TDto Tentity, CancellationToken ct = default)
+    public virtual async Task Update(Guid id, TDto Tentity, CancellationToken ct = default)
     {
-        var result = await _crudService.UpdateAsync(id, Tentity, ct);
-        return Ok(result);
+        await _crudService.UpdateAsync(id, Tentity, ct);
     }
 
     /// <summary>

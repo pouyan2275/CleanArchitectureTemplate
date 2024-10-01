@@ -1,4 +1,5 @@
 ﻿using Application.Bases.Dtos.Paginations;
+using Application.Bases.Exceptions;
 using Application.Bases.Interfaces.IServices;
 using Domain.Bases.Interfaces.Entities;
 using Domain.Bases.Interfaces.Repositories;
@@ -22,7 +23,7 @@ public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSel
     {
         _repository = repository;
     }
-    public virtual async Task<TDtoSelect> AddAsync(TDto Tentity, CancellationToken ct = default)
+    public virtual async Task AddAsync(TDto Tentity, CancellationToken ct = default)
     {
         Guid id;
         bool guidUsed;
@@ -35,36 +36,47 @@ public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSel
 
         var entity = Tentity.Adapt<TEntity>();
 
-        entity!.CreatedOn = DateTime.UtcNow;
-        entity!.CreatedBy = default(Guid);
-        entity!.Id = id;
+        entity.CreatedOn = DateTime.UtcNow;
+        entity.CreatedBy = default(Guid);
+        entity.Id = id;
 
-        await _repository.AddAsync(entity!, ct: ct);
-
-        var result = await _repository.TableNoTracking.Where(x => x.Id == id).ProjectToType<TDtoSelect>().SingleAsync();
-        return result;
+        await _repository.AddAsync(entity, ct: ct);
     }
 
     public virtual async Task DeleteAsync(Guid id, CancellationToken ct = default)
     {
-        await _repository.DeleteAsync(id, ct: ct);
+        var record = await _repository.GetByIdAsync(id, ct);
+        record = record ?? throw new NotFoundException("id", id.ToString());
+        await _repository.DeleteAsync(record, ct: ct);
     }
 
     public virtual async Task<List<TDtoSelect>> GetAllAsync(CancellationToken ct = default)
     {
-        var result = await _repository.TableNoTracking.ProjectToType<TDtoSelect>().ToListAsync(cancellationToken: ct);
+        var result = await _repository.GetAllAsync<TDtoSelect>(ct);
+        return result;
+    }
+
+    public virtual async Task<List<TDtoSelect>> GetAllEagleLoadingAsync(CancellationToken ct = default)
+    {
+        var result = await _repository.GetAllEagleLoadingAsync<TDtoSelect>(ct);
         return result;
     }
 
     public virtual async Task<TDtoSelect?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
-        var result = (await _repository.GetByIdAsync(id, ct)).Adapt<TDtoSelect>();
+        var result = await _repository.GetByIdAsync<TDtoSelect>(id, ct);
         return result;
     }
 
-    public virtual async Task<TDtoSelect> UpdateAsync(Guid id, TDto Tentity, CancellationToken ct = default)
+    public virtual async Task<TDtoSelect?> GetByIdEagleLoadingAsync(Guid id, CancellationToken ct = default)
     {
-        TEntity entity = await _repository.GetByIdAsync(id, ct) ?? throw new Exception("Not Found");
+        var result = await _repository.GetByIdEagleLoadingAsync<TDtoSelect>(id, ct);
+        return result;
+    }
+
+    public virtual async Task UpdateAsync(Guid id, TDto Tentity, CancellationToken ct = default)
+    {
+        TEntity entity = await _repository.GetByIdAsync(id, ct) ?? throw new NotFoundException("id",id.ToString());
 
         entity = Tentity.Adapt(entity);
 
@@ -73,14 +85,11 @@ public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSel
         entity!.Id = id;
 
         await _repository.UpdateAsync(entity!, ct: ct);
-        var result = await _repository.TableNoTracking.Where(x => x.Id == id).ProjectToType<TDtoSelect>().SingleAsync();
-        return result;
     }
 
     public async Task<PaginationDtoSelect<TDtoSelect>> PaginationAsync(PaginationDto paginationDto,CancellationToken ct = default)
     {
         var table = _repository.TableNoTracking;
-
 
         paginationDto.PageNumber = paginationDto.PageNumber <= 0 ? 1 : paginationDto.PageNumber;
         paginationDto.PageSize = paginationDto.PageSize <= 0 ? int.MaxValue : paginationDto.PageSize;
@@ -90,21 +99,13 @@ public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSel
             var filterString = "x => ";
 
             paginationDto.Filter.ForEach(x => {
-                switch (x.Operator)
+                filterString += x.Operator switch
                 {
-                    case FilterOperator.Contains:
-                        filterString += $" x.{x.Key}.ToString().Contains(\"{x.Value}\") and";
-                        break;
-                    case FilterOperator.IsNull:
-                        filterString += $" x.{x.Key} == null and";
-                        break;
-                    case FilterOperator.NotNull:
-                        filterString += $" x.{x.Key} != null and";
-                        break;
-                    default:
-                        filterString += $" x.{x.Key} {x.Operator.AttributeDescription()} \"{x.Value}\" and";
-                        break;
-                }
+                    FilterOperator.Contains => $" x.{x.Key}.ToString().Contains(\"{x.Value}\") and",
+                    FilterOperator.IsNull => $" x.{x.Key} == null and",
+                    FilterOperator.NotNull => $" x.{x.Key} != null and",
+                    _ => $" x.{x.Key} {x.Operator.AttributeDescription()} \"{x.Value}\" and",
+                };
             });
             filterString = filterString[..(filterString.Length - 3)];
             table = table.Where(filterString);

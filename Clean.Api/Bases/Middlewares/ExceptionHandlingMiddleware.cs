@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Net;
-using System.Text.Json;
 
 namespace Personal.Server.Bases.Middlewares;
 

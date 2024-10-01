@@ -6,8 +6,10 @@ namespace Application.Bases.Interfaces.IServices
     {
         public Task<TDtoSelect?> GetByIdAsync(Guid id, CancellationToken ct = default);
         public Task<List<TDtoSelect>> GetAllAsync(CancellationToken ct = default);
-        public Task<TDtoSelect> AddAsync(TDto Tentity, CancellationToken ct = default);
-        public Task<TDtoSelect> UpdateAsync(Guid id, TDto Tentity, CancellationToken ct = default);
+        public Task<TDtoSelect?> GetByIdEagleLoadingAsync(Guid id, CancellationToken ct = default);
+        public Task<List<TDtoSelect>> GetAllEagleLoadingAsync(CancellationToken ct = default);
+        public Task AddAsync(TDto Tentity, CancellationToken ct = default);
+        public Task UpdateAsync(Guid id, TDto Tentity, CancellationToken ct = default);
         public Task DeleteAsync(Guid id, CancellationToken ct = default);
         public Task<PaginationDtoSelect<TDtoSelect>> PaginationAsync(PaginationDto paginationDto, CancellationToken ct = default);
     }
