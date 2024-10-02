@@ -11,15 +11,15 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var entities = Assembly.GetAssembly(typeof(BaseEntity))?.GetTypes()
-        .Where(x => x.IsClass).ToList();
-        entities?.ForEach(entity =>
+        var entities = Assembly.GetAssembly(typeof(BaseEntity))?.GetTypes();
+
+        foreach (var entity in entities!)
         {
             if (entity.IsSubclassOf(typeof(BaseEntity)) && !entity.IsAbstract)
                 modelBuilder.Entity(entity)
                 .HasIndex("IsDeleted")
                 .HasFilter("IsDeleted = 0");
-        });
+        }
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
