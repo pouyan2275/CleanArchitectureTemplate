@@ -1,11 +1,11 @@
-﻿using Domain.Bases.Interfaces.Entities;
+﻿using Domain.Bases.Entities;
 using Domain.Bases.Models.FilterParams;
 using Domain.Bases.Models.SortParams;
 
 namespace Domain.Bases.Interfaces.Repositories
 {
     public interface IRepository<TEntity>
-        where TEntity : IBaseEntity
+        where TEntity : BaseEntity
     {
         public IQueryable<TEntity> Table { get; }
         public IQueryable<TEntity> TableNoTracking { get; }
@@ -19,7 +19,8 @@ namespace Domain.Bases.Interfaces.Repositories
         public Task<List<TDestination>> GetAllEagleLoadingAsync<TDestination>(CancellationToken ct = default);
         public Task AddAsync(TEntity Tentity, bool save = true, CancellationToken ct = default);
         public Task UpdateAsync(TEntity Tentity, bool save = true, CancellationToken ct = default);
-        public Task DeleteAsync(TEntity entity, bool save = true, CancellationToken ct = default);
+        public Task DeleteAsync(Guid entity, bool save = true, CancellationToken ct = default);
+        public Task DeleteRecordAsync(Guid entity, bool save = true, CancellationToken ct = default);
         public Task<List<TEntity>> PaginationAsync(List<FilterParam>? filterParams, 
             List<SortParam>? sortParams, 
             int pageNumber = 1, 

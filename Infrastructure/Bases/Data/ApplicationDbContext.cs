@@ -1,7 +1,6 @@
-﻿using Domain.Bases.Interfaces.Entities;
+﻿using Domain.Bases.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-
 namespace Infrastructure.Bases.Data;
 
 public class ApplicationDbContext : DbContext
@@ -12,11 +11,14 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var entities = Assembly.GetAssembly(typeof(IBaseEntity))?.GetTypes()
+        var entities = Assembly.GetAssembly(typeof(BaseEntity))?.GetTypes()
         .Where(x => x.IsClass).ToList();
         entities?.ForEach(entity =>
         {
-            modelBuilder.Entity(entity);
+            if (entity.IsSubclassOf(typeof(BaseEntity)) && !entity.IsAbstract)
+                modelBuilder.Entity(entity)
+                .HasIndex("IsDeleted")
+                .HasFilter("IsDeleted = 0");
         });
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);

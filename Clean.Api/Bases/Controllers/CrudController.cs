@@ -1,7 +1,6 @@
 ﻿using Application.Bases.Dtos.Paginations;
 using Application.Bases.Interfaces.IServices;
-using Domain.Bases.Interfaces.Entities;
-using Mapster;
+using Domain.Bases.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Bases.Controllers;
@@ -12,11 +11,11 @@ namespace Api.Bases.Controllers;
 /// <param name="repository"></param>
 [Route("api/[controller]")]
 [ApiController]
-public class CrudController<TEntity>(ICrudService<TEntity> crudService) : CrudController<TEntity, TEntity, TEntity>(crudService) where TEntity : IBaseEntity { }
-public class CrudController<TDto, TEntity>(ICrudService<TDto, TEntity> crudService) : CrudController<TDto, TDto, TEntity>(crudService) where TEntity : IBaseEntity { }
+public class CrudController<TEntity>(ICrudService<TEntity> crudService) : CrudController<TEntity, TEntity, TEntity>(crudService) where TEntity : BaseEntity { }
+public class CrudController<TDto, TEntity>(ICrudService<TDto, TEntity> crudService) : CrudController<TDto, TDto, TEntity>(crudService) where TEntity : BaseEntity { }
 
 public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
-    where TEntity : IBaseEntity
+    where TEntity : BaseEntity
 {
     private readonly ICrudService<TDto,TDtoSelect,TEntity> _crudService;
 

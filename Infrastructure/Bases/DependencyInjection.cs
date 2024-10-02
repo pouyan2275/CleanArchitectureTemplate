@@ -19,9 +19,27 @@ public static class DependencyInjection
             option.UseSqlServer(configuration.GetConnectionString("SqlServer"),
                 dboption => dboption.EnableRetryOnFailure());
         });
+
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        services.AddScoped<IPersonRepository, PersonRepository>();
-        services.AddScoped<IDegreeRepository, DegreeRepository>();
+
+        var repositoryAssembly = typeof(Repository<>).Assembly;
+
+        var irepositoryAssembly = typeof(IRepository<>).Assembly;
+
+        var repositories = repositoryAssembly.GetExportedTypes()
+            .Where(x => x.FullName!.Contains("Repositories") &&
+            !x.FullName!.Contains("Base")
+            )
+            .ToList();
+        var irepositories = irepositoryAssembly.GetExportedTypes()
+            .Where(x => x.FullName!.Contains("Repositories") &&
+            !x.FullName!.Contains("Base"))
+            .ToList();
+
+        for (int i = 0; i < repositories.Count; i++)
+        {
+            services.AddScoped(irepositories[i], repositories[i]);
+        }
 
         return services;
     }

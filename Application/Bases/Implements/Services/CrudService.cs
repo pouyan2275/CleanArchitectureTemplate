@@ -1,21 +1,19 @@
 ﻿using Application.Bases.Dtos.Paginations;
 using Application.Bases.Exceptions;
 using Application.Bases.Interfaces.IServices;
-using Domain.Bases.Interfaces.Entities;
+using Domain.Bases.Entities;
 using Domain.Bases.Interfaces.Repositories;
-using Infrastructure.Bases.Data.Repositories;
 using Mapster;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Bases.Implements.Services;
 
 public class CrudService<TEntity>(IRepository<TEntity> repository) : CrudService<TEntity, TEntity, TEntity>(repository)
-    where TEntity : IBaseEntity{}
+    where TEntity : BaseEntity{}
 public class CrudService<TDto, TEntity>(IRepository<TEntity> repository) : CrudService<TDto, TDto, TEntity>(repository)
-    where TEntity : IBaseEntity{}
+    where TEntity : BaseEntity{}
 
 public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSelect, TEntity>
-    where TEntity : IBaseEntity
+    where TEntity : BaseEntity
 {
     private readonly IRepository<TEntity> _repository;
     public CrudService(IRepository<TEntity> repository)
@@ -44,9 +42,7 @@ public class CrudService<TDto, TDtoSelect, TEntity> : ICrudService<TDto, TDtoSel
 
     public virtual async Task DeleteAsync(Guid id, CancellationToken ct = default)
     {
-        var record = await _repository.GetByIdAsync(id, ct);
-        record = record ?? throw new NotFoundException("id", id.ToString());
-        await _repository.DeleteAsync(record, ct: ct);
+        await _repository.DeleteAsync(id, ct: ct);
     }
 
     public virtual async Task<List<TDtoSelect>> GetAllAsync(CancellationToken ct = default)
