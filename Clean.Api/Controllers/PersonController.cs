@@ -19,12 +19,5 @@ namespace Api.Controllers
             _personService = personService;
             _repository = repository;
         }
-        [HttpGet("[action]")]
-        public async Task test()
-        {
-            await _repository.GetByIdAsync(Guid.Parse("E1870BE3-7409-46EF-8AC0-0ADEEC59E2CF"));
-            await _repository.GetByIdEagleLoadingAsync(Guid.Parse("E1870BE3-7409-46EF-8AC0-0ADEEC59E2CF"));
-            
-        }
     }
 }
