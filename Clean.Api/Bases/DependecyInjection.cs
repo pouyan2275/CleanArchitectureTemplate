@@ -1,9 +1,8 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Text.Json.Serialization;
 
-namespace Api.Bases;
+namespace Personal.Server.Bases;
 
 public static class DependencyInjection
 {

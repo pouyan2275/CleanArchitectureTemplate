@@ -1,5 +1,5 @@
-﻿using Api.Bases;
-using Application.Bases;
+﻿using Application.Bases;
+using Personal.Server.Bases;
 
 
 var builder = WebApplication.CreateBuilder(args);

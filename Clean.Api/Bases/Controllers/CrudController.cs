@@ -3,7 +3,7 @@ using Application.Bases.Interfaces.IServices;
 using Domain.Bases.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Bases.Controllers;
+namespace Personal.Server.Bases.Controllers;
 /// <summary>
 /// Restfull api
 /// </summary>
@@ -17,7 +17,7 @@ public class CrudController<TDto, TEntity>(ICrudService<TDto, TEntity> crudServi
 public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
     where TEntity : BaseEntity
 {
-    private readonly ICrudService<TDto,TDtoSelect,TEntity> _crudService;
+    private readonly ICrudService<TDto, TDtoSelect, TEntity> _crudService;
 
     public CrudController(ICrudService<TDto, TDtoSelect, TEntity> crudService)
     {
@@ -57,7 +57,7 @@ public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
     [HttpGet]
     public virtual async Task<ActionResult<List<TDtoSelect>>> GetAll(CancellationToken ct = default)
     {
-       
+
         var result = await _crudService.GetAllAsync(ct);
         return Ok(result);
     }
@@ -118,9 +118,9 @@ public class CrudController<TDto, TDtoSelect, TEntity> : ControllerBase
     /// <param name="pagination"></param>
     /// <returns></returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<PaginationDtoSelect<TDtoSelect>>> Pagination(PaginationDto pagination,CancellationToken ct = default)
+    public async Task<ActionResult<PaginationDtoSelect<TDtoSelect>>> Pagination(PaginationDto pagination, CancellationToken ct = default)
     {
-        var result = await _crudService.PaginationAsync(pagination,ct: ct);
+        var result = await _crudService.PaginationAsync(pagination, ct: ct);
         return Ok(result);
     }
 
