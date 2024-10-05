@@ -8,13 +8,13 @@ namespace Personal.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DegreeController : CrudController<DegreeDto, DegreeDtoSelect, Degree>
+    public class DegreeController : BaseController<DegreeDto, DegreeDtoSelect, Degree>
     {
-        private readonly IDegreeService _crudService;
+        private readonly IDegreeService _baseService;
 
-        public DegreeController(IDegreeService crudService) : base(crudService)
+        public DegreeController(IDegreeService baseService) : base(baseService)
         {
-            _crudService = crudService;
+            _baseService = baseService;
         }
     }
 }

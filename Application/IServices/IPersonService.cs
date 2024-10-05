@@ -4,7 +4,7 @@ using Domain.Entities;
 
 namespace Application.IServices
 {
-    public interface IPersonService : ICrudService<PersonDto, PersonDtoSelect, Person>
+    public interface IPersonService : IBaseService<PersonDto, PersonDtoSelect, Person>
     {
     }
 }

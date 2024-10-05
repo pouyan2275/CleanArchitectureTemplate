@@ -5,7 +5,7 @@ using Domain.Entities;
 using Domain.Interfaces.Repositories;
 namespace Application.Services;
 
-public class DegreeService : CrudService<DegreeDto, DegreeDtoSelect, Degree>, IDegreeService
+public class DegreeService : BaseService<DegreeDto, DegreeDtoSelect, Degree>, IDegreeService
 {
     private readonly IDegreeRepository _repository;
 

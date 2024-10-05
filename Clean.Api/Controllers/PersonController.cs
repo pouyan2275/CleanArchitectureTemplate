@@ -9,7 +9,7 @@ namespace Personal.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonController : CrudController<PersonDto, PersonDtoSelect, Person>
+    public class PersonController : BaseController<PersonDto, PersonDtoSelect, Person>
     {
         private readonly IPersonService _personService;
         private readonly IPersonRepository _repository;

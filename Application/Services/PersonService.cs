@@ -5,7 +5,7 @@ using Domain.Entities;
 using Domain.Interfaces.Repositories;
 namespace Application.Services;
 
-public class PersonService : CrudService<PersonDto, PersonDtoSelect, Person>, IPersonService
+public class PersonService : BaseService<PersonDto, PersonDtoSelect, Person>, IPersonService
 {
     private readonly IPersonRepository _repository;
 

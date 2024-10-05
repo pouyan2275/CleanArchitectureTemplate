@@ -18,11 +18,11 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddInfrastructure();
-        services.AddScoped(typeof(ICrudService<>), typeof(CrudService<>));
+        services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
 
-        var serviceAssembly = typeof(CrudService<>).Assembly;
+        var serviceAssembly = typeof(BaseService<>).Assembly;
 
-        var iserviceAssembly = typeof(ICrudService<>).Assembly;
+        var iserviceAssembly = typeof(IBaseService<>).Assembly;
 
         var crudServices = serviceAssembly.GetExportedTypes()
             .Where(x => x.FullName!.Contains(".Services") &&

@@ -4,6 +4,6 @@ using Domain.Entities;
 
 namespace Application.IServices;
 
-public interface IDegreeService : ICrudService<DegreeDto, DegreeDtoSelect, Degree>
+public interface IDegreeService : IBaseService<DegreeDto, DegreeDtoSelect, Degree>
 {
 }
