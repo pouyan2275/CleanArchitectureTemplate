@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241002073136_AddDeletefilter")]
-    partial class AddDeletefilter
+    [Migration("20241025062923_test3")]
+    partial class test3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,10 +53,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IsDeleted")
-                        .IsDescending()
-                        .HasFilter("IsDeleted = 0");
 
                     b.HasIndex("Title")
                         .IsUnique()
@@ -102,15 +98,28 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("DegreeId");
 
-                    b.HasIndex("IsDeleted")
-                        .IsDescending()
-                        .HasFilter("IsDeleted = 0");
-
                     b.HasIndex("NationalCode")
                         .IsUnique()
                         .HasFilter("[NationalCode] IS NOT NULL");
 
                     b.ToTable("Persons", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Test", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Test");
                 });
 
             modelBuilder.Entity("Domain.Entities.Person", b =>

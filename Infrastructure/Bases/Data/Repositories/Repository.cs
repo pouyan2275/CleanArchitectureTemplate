@@ -1,17 +1,18 @@
-﻿using Domain.Bases.Entities;
-using Domain.Bases.Interfaces.Repositories;
+﻿using Domain.Bases.Interfaces.Repositories;
 using Domain.Bases.Models.FilterParams;
 using Domain.Bases.Models.SortParams;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
+
 
 namespace Infrastructure.Bases.Data.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity>
-    where TEntity : BaseEntity
+    where TEntity : class
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly DbSet<TEntity> Entity;
+    public readonly DbSet<TEntity> Entity;
     public IQueryable<TEntity> Table { get { return _dbContext.Set<TEntity>().AsTracking().AsQueryable(); } }
     public IQueryable<TEntity> TableNoTracking { get { return _dbContext.Set<TEntity>().AsNoTracking().AsQueryable(); } }
 
@@ -35,47 +36,38 @@ public class Repository<TEntity> : IRepository<TEntity>
 
     public virtual async Task<List<TEntity>> GetAllAsync(CancellationToken ct = default)
     {
-        var result = await Entity.Where(x => !x.IsDeleted).ToListAsync(cancellationToken: ct);
+        var result = await Entity.ToListAsync(cancellationToken: ct);
         return result;
     }
 
     public virtual async Task<List<TDestination>> GetAllAsync<TDestination>(CancellationToken ct = default)
     {
-        var result = (await Entity.Where(x => !x.IsDeleted).ToListAsync(cancellationToken: ct)).Adapt<List<TDestination>>();
+        var result = (await Entity.ToListAsync(cancellationToken: ct)).Adapt<List<TDestination>>();
         return result;
     }
 
     public virtual async Task<List<TDestination>> GetAllEagleLoadingAsync<TDestination>(CancellationToken ct = default)
     {
-        var result = await Entity.Where(x => !x.IsDeleted).ProjectToType<TDestination>().ToListAsync(cancellationToken: ct);
+        var result = await Entity.ProjectToType<TDestination>().ToListAsync(cancellationToken: ct);
         return result;
     }
     public virtual async Task<List<TEntity>> GetAllEagleLoadingAsync(CancellationToken ct = default)
     {
-        var result = await Entity.Where(x => !x.IsDeleted).ProjectToType<TEntity>().ToListAsync(cancellationToken: ct);
+        var result = await Entity.ProjectToType<TEntity>().ToListAsync(cancellationToken: ct);
         return result;
     }
 
-    public virtual async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public virtual async Task<TEntity?> GetByIdAsync(object id, CancellationToken ct = default)
     {
-        var record = await TableNoTracking.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted, cancellationToken: ct);
+        var record = await Entity.FindAsync(id);
+        await SaveChangesAsync(ct);
         return record;
     }
 
-    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(Guid id, CancellationToken ct = default)
+    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object id, CancellationToken ct = default)
     {
-        var record = (await TableNoTracking.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted, cancellationToken: ct)).Adapt<TDestination>();
-        return record;
-    }
-
-    public virtual async Task<TDestination?> GetByIdEagleLoadingAsync<TDestination>(Guid id, CancellationToken ct = default)
-    {
-        var record = await TableNoTracking.Where(x => x.Id == id && !x.IsDeleted).ProjectToType<TDestination?>().FirstOrDefaultAsync(cancellationToken: ct);
-        return record;
-    }
-    public virtual async Task<TEntity?> GetByIdEagleLoadingAsync(Guid id, CancellationToken ct = default)
-    {
-        var record = await TableNoTracking.Where(x => x.Id == id && !x.IsDeleted).ProjectToType<TEntity?>().FirstOrDefaultAsync(cancellationToken: ct);
+        var record = (await Entity.FindAsync(id)).Adapt<TDestination>();
+        await SaveChangesAsync(ct);
         return record;
     }
 
@@ -86,16 +78,16 @@ public class Repository<TEntity> : IRepository<TEntity>
             await SaveChangesAsync(ct);
     }
 
-    public virtual async Task DeleteAsync(Guid id, bool save = true, CancellationToken ct = default)
+    public virtual async Task DeleteAsync(object id, bool save = true, CancellationToken ct = default)
     {
-        await Entity.Where(x=> x.Id == id && !x.IsDeleted)
-            .ExecuteUpdateAsync(x => 
-            x.SetProperty(p => p.IsDeleted, true), cancellationToken: ct);
+        var result = await Entity.FindAsync(id);
+        Entity.Remove(result!);
     }
 
-    public virtual async Task DeleteRecordAsync(Guid id, bool save = true, CancellationToken ct = default)
+    public virtual async Task DeleteRecordAsync(object id, bool save = true, CancellationToken ct = default)
     {
-        await Entity.Where(x => x.Id == id).ExecuteDeleteAsync(ct);
+        var result = await Entity.FindAsync(id);
+        Entity.Remove(result!);
     }
 
     public virtual async Task<List<TDestination>> PaginationEagleLoadingAsync<TDestination>(List<FilterParam>? filterParams,

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Net;
 
-namespace Personal.Server.Bases.Middlewares;
+namespace Api.Server.Bases.Middlewares;
 
 public class ExceptionHandlingMiddleware
 {

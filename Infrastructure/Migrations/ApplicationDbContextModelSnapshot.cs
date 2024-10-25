@@ -51,9 +51,6 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IsDeleted")
-                        .HasFilter("IsDeleted = 0");
-
                     b.HasIndex("Title")
                         .IsUnique()
                         .HasFilter("[Title] IS NOT NULL");
@@ -98,14 +95,28 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("DegreeId");
 
-                    b.HasIndex("IsDeleted")
-                        .HasFilter("IsDeleted = 0");
-
                     b.HasIndex("NationalCode")
                         .IsUnique()
                         .HasFilter("[NationalCode] IS NOT NULL");
 
                     b.ToTable("Persons", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Test", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Test");
                 });
 
             modelBuilder.Entity("Domain.Entities.Person", b =>

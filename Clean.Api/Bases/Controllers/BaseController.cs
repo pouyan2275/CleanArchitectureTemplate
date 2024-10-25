@@ -3,7 +3,7 @@ using Application.Bases.Interfaces.IServices;
 using Domain.Bases.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Personal.Server.Bases.Controllers;
+namespace Api.Server.Bases.Controllers;
 /// <summary>
 /// Restfull api
 /// </summary>
@@ -11,11 +11,11 @@ namespace Personal.Server.Bases.Controllers;
 /// <param name="repository"></param>
 [Route("api/[controller]")]
 [ApiController]
-public class BaseController<TEntity>(IBaseService<TEntity> baseService) : BaseController<TEntity, TEntity, TEntity>(baseService) where TEntity : BaseEntity { }
-public class BaseController<TDto, TEntity>(IBaseService<TDto, TEntity> baseService) : BaseController<TDto, TDto, TEntity>(baseService) where TEntity : BaseEntity { }
+public class BaseController<TEntity>(IBaseService<TEntity> baseService) : BaseController<TEntity, TEntity, TEntity>(baseService) where TEntity : class { }
+public class BaseController<TDto, TEntity>(IBaseService<TDto, TEntity> baseService) : BaseController<TDto, TDto, TEntity>(baseService) where TEntity : class { }
 
 public class BaseController<TDto, TDtoSelect, TEntity> : ControllerBase
-    where TEntity : BaseEntity
+    where TEntity : class
 {
     private readonly IBaseService<TDto, TDtoSelect, TEntity> _baseService;
 
@@ -30,9 +30,9 @@ public class BaseController<TDto, TDtoSelect, TEntity> : ControllerBase
     /// <param name="ct"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public virtual async Task<ActionResult<TDtoSelect?>> GetById(Guid id,bool lazyLoading = true, CancellationToken ct = default)
+    public virtual async Task<ActionResult<TDtoSelect?>> GetById(Guid id, CancellationToken ct = default)
     {
-        var result = await _baseService.GetByIdAsync(id, lazyLoading, ct: ct);
+        var result = await _baseService.GetByIdAsync(id, ct: ct);
         return Ok(result);
     }
 

@@ -8,14 +8,14 @@ using Mapster;
 namespace Application.Bases.Implements.Services;
 
 public class BaseService<TEntity>(IRepository<TEntity> repository) : BaseService<TEntity, TEntity, TEntity>(repository)
-    where TEntity : BaseEntity
+    where TEntity : class
 { }
 public class BaseService<TDto, TEntity>(IRepository<TEntity> repository) : BaseService<TDto, TDto, TEntity>(repository)
-    where TEntity : BaseEntity
+    where TEntity : class
 { }
 
 public class BaseService<TDto, TDtoSelect, TEntity> : IBaseService<TDto, TDtoSelect, TEntity>
-    where TEntity : BaseEntity
+    where TEntity : class
 {
     private readonly IRepository<TEntity> _repository;
     public BaseService(IRepository<TEntity> repository)
@@ -24,25 +24,25 @@ public class BaseService<TDto, TDtoSelect, TEntity> : IBaseService<TDto, TDtoSel
     }
     public virtual async Task AddAsync(TDto Tentity, CancellationToken ct = default)
     {
-        Guid id;
-        bool guidUsed;
+        //Guid id;
+        //bool guidUsed;
 
-        do
-        {
-            id = Guid.NewGuid();
-            guidUsed = await _repository.GetByIdAsync(id, ct) != null;
-        } while (guidUsed);
+        //do
+        //{
+        //    id = Guid.NewGuid();
+        //    guidUsed = await _repository.GetByIdAsync(id, ct) != null;
+        //} while (guidUsed);
 
         var entity = Tentity.Adapt<TEntity>();
 
-        entity.CreatedOn = DateTime.Now;
-        entity.CreatedBy = default(Guid);
-        entity.Id = id;
+        //entity.CreatedOn = DateTime.Now;
+        //entity.CreatedBy = default(Guid);
+        //entity.Id = id;
 
         await _repository.AddAsync(entity, ct: ct);
     }
 
-    public virtual async Task DeleteAsync(Guid id, CancellationToken ct = default)
+    public virtual async Task DeleteAsync(object id, CancellationToken ct = default)
     {
         await _repository.DeleteAsync(id, ct: ct);
     }
@@ -56,24 +56,22 @@ public class BaseService<TDto, TDtoSelect, TEntity> : IBaseService<TDto, TDtoSel
         return result;
     }
 
-    public virtual async Task<TDtoSelect?> GetByIdAsync(Guid id, bool lazyLoading = true, CancellationToken ct = default)
+    public virtual async Task<TDtoSelect?> GetByIdAsync(object id, CancellationToken ct = default)
     {
         TDtoSelect? result;
-        result = lazyLoading ?
-          await _repository.GetByIdAsync<TDtoSelect>(id, ct):
-          await _repository.GetByIdEagleLoadingAsync<TDtoSelect>(id, ct);
+        result = await _repository.GetByIdAsync<TDtoSelect>(id, ct);
         return result;
     }
 
-    public virtual async Task UpdateAsync(Guid id, TDto Tentity, CancellationToken ct = default)
+    public virtual async Task UpdateAsync(object id, TDto Tentity, CancellationToken ct = default)
     {
         TEntity entity = await _repository.GetByIdAsync(id, ct) ?? throw new NotFoundException("id", id.ToString());
 
         entity = Tentity.Adapt(entity);
 
-        entity!.ModifiedOn = DateTime.Now;
-        entity!.ModifiedBy = default(Guid);
-        entity!.Id = id;
+        //entity!.ModifiedOn = DateTime.Now;
+        //entity!.ModifiedBy = default(object);
+        //entity!.Id = id;
 
         await _repository.UpdateAsync(entity!, ct: ct);
     }
