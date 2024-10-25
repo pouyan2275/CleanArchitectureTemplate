@@ -1,7 +1,7 @@
 ﻿using Application.Bases.Implements.Services;
 using Application.IServices;
-using Domain.Bases.Interfaces.Repositories;
 using Domain.Entities;
+using Infrastructure.Bases.Interfaces.Repositories;
 
 namespace Application.Services;
 

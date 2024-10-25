@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
-using Domain.Interfaces.Repositories;
 using Infrastructure.Bases.Data;
 using Infrastructure.Bases.Data.Repositories;
+using Infrastructure.Interfaces.Repositories;
 
 namespace Infrastructure.Data.Repositories;
 

@@ -1,8 +1,7 @@
 ﻿using Application.Bases.Dtos.Paginations;
 using Application.Bases.Exceptions;
 using Application.Bases.Interfaces.IServices;
-using Domain.Bases.Entities;
-using Domain.Bases.Interfaces.Repositories;
+using Infrastructure.Bases.Interfaces.Repositories;
 using Mapster;
 
 namespace Application.Bases.Implements.Services;

@@ -1,6 +1,6 @@
-﻿using Domain.Bases.Interfaces.Repositories;
-using Domain.Bases.Models.FilterParams;
+﻿using Domain.Bases.Models.FilterParams;
 using Domain.Bases.Models.SortParams;
+using Infrastructure.Bases.Interfaces.Repositories;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,15 +10,15 @@ namespace Infrastructure.Bases.Data.Repositories;
 public class Repository<TEntity> : IRepository<TEntity>
     where TEntity : class
 {
-    private readonly ApplicationDbContext _dbContext;
+    public ApplicationDbContext DbContext { get; set; }
     public readonly DbSet<TEntity> Entity;
-    public IQueryable<TEntity> Table { get { return _dbContext.Set<TEntity>().AsTracking().AsQueryable(); } }
-    public IQueryable<TEntity> TableNoTracking { get { return _dbContext.Set<TEntity>().AsNoTracking().AsQueryable(); } }
+    public IQueryable<TEntity> Table { get { return DbContext.Set<TEntity>().AsTracking().AsQueryable(); } }
+    public IQueryable<TEntity> TableNoTracking { get { return DbContext.Set<TEntity>().AsNoTracking().AsQueryable(); } }
 
     public Repository(ApplicationDbContext dbContext)
     {
-        _dbContext = dbContext;
-        Entity = _dbContext.Set<TEntity>();
+        DbContext = dbContext;
+        Entity = DbContext.Set<TEntity>();
     }
 
     public virtual async Task AddAsync(TEntity Tentity, bool save = true, CancellationToken ct = default)
@@ -30,7 +30,7 @@ public class Repository<TEntity> : IRepository<TEntity>
 
     public virtual async Task SaveChangesAsync(CancellationToken ct = default)
     {
-        await _dbContext.SaveChangesAsync(ct);
+        await DbContext.SaveChangesAsync(ct);
     }
 
     public virtual async Task<List<TEntity>> GetAllAsync(CancellationToken ct = default)

@@ -2,7 +2,7 @@
 using Application.Dtos.Persons;
 using Application.IServices;
 using Domain.Entities;
-using Domain.Interfaces.Repositories;
+using Infrastructure.Interfaces.Repositories;
 namespace Application.Services;
 
 public class PersonService : BaseService<PersonDto, PersonDtoSelect, Person>, IPersonService

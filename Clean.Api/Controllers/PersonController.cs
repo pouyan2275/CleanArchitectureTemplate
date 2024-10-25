@@ -1,9 +1,9 @@
 ﻿using Application.Dtos.Persons;
 using Application.IServices;
 using Domain.Entities;
-using Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Api.Server.Bases.Controllers;
+using Infrastructure.Interfaces.Repositories;
 
 namespace Api.Server.Controllers
 {

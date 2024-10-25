@@ -1,12 +1,14 @@
 ﻿using Domain.Bases.Entities;
 using Domain.Bases.Models.FilterParams;
 using Domain.Bases.Models.SortParams;
+using Infrastructure.Bases.Data;
 
-namespace Domain.Bases.Interfaces.Repositories
+namespace Infrastructure.Bases.Interfaces.Repositories
 {
     public interface IRepository<TEntity>
         where TEntity : class
     {
+        public ApplicationDbContext DbContext { get; set; }
         public IQueryable<TEntity> Table { get; }
         public IQueryable<TEntity> TableNoTracking { get; }
         public Task<TEntity?> GetByIdAsync(object id, CancellationToken ct = default);
