@@ -2,15 +2,21 @@
 
 namespace Infrastructure.Bases.Data;
 
-public static class DbContextFactory
+public class DbContextFactory
 {
-    public static Dictionary<string, string> ConnectionStrings { get; set; }
+    private readonly Dictionary<string, string> _connectionStrings;
 
-    public static ApplicationDbContext Create(string key)
+    public DbContextFactory(Dictionary<string, string> connectionStrings)
+    {
+        _connectionStrings = connectionStrings;
+    }
+    public ApplicationDbContext Create(string key)
     {
         if (string.IsNullOrEmpty(key)) throw new ArgumentNullException();
-        var connStr = ConnectionStrings[key];
+
+        var connStr = _connectionStrings[key] ?? throw new ArgumentNullException("Connection string not found");
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+        optionsBuilder.UseSqlServer(connStr);
         return new ApplicationDbContext(optionsBuilder.Options);
     }
 }
