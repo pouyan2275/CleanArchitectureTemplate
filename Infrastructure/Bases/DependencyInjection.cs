@@ -4,6 +4,7 @@ using Infrastructure.Bases.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Bases.Interfaces.Repositories;
+using Mapster;
 
 namespace Infrastructure.Bases;
 
@@ -17,16 +18,19 @@ public static class DependencyInjection
             option.UseSqlServer(configuration.GetConnectionString("BaseConnection"),
                 dboption => dboption.EnableRetryOnFailure());
         });
-        var b = "";
-        //services.AddSingleton(typeof(DbContextFactory), (conf) =>
-        //{
-        //    var configuration = conf.GetRequiredService<IConfiguration>();
-        //    var a = configuration["ConnectionStrings"];
-        //    b = a;
-        //    var dicConnStrings = new Dictionary<string, string>();
-        //    return new DbContextFactory(dicConnStrings);
-        //});
-        
+
+        services.AddSingleton(typeof(DbContextFactory), (conf) =>
+        {
+            var configuration = conf.GetRequiredService<IConfiguration>();
+            var appSettingCons = configuration.GetSection("ConnectionStrings").GetChildren();
+            var dicConnStrings = new Dictionary<string, string>();
+            foreach (var item in appSettingCons)
+            {
+                dicConnStrings.Add(item.Path[18..], item.Value ?? throw new NullReferenceException());
+            }
+            return new DbContextFactory(dicConnStrings);
+        });
+
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
         var repositoryAssembly = typeof(Repository<>).Assembly;
