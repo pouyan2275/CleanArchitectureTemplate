@@ -8,7 +8,7 @@ namespace Application.Services;
 
 public class TestService : BaseService<Test>, ITestService
 {
-    public TestService(IRepository<Test> repository,DbContextFactory db) : base(repository)
+    public TestService(IRepository<Test> repository) : base(repository)
     {
     }
 }
