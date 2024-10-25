@@ -14,7 +14,7 @@ public class ApplicationDbContext : DbContext
         var entities = Assembly.GetAssembly(typeof(BaseEntity))?.GetTypes()
             .Where(x=> (
             x.IsSubclassOf(typeof(BaseEntity)) 
-            || x.IsSubclassOf(typeof(BaseEntityDbFirst))
+            || x.IsSubclassOf(typeof(BaseEntityEmpty))
             ) 
             && !x.IsAbstract);
 

@@ -3,7 +3,6 @@ using Domain.Bases.Models.FilterParams;
 using Domain.Bases.Models.SortParams;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
 
 
 namespace Infrastructure.Bases.Data.Repositories;

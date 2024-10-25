@@ -1,6 +1,4 @@
 ﻿using Domain.Bases.Interfaces.Repositories;
-using Domain.Interfaces.Repositories;
-using Infrastructure.Data.Repositories;
 using Infrastructure.Bases.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Infrastructure.Bases.Data;
@@ -16,7 +14,7 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>((conf, option) =>
         {
             var configuration = conf.GetRequiredService<IConfiguration>();
-            option.UseSqlServer(configuration.GetConnectionString("SqlServer"),
+            option.UseSqlServer(configuration.GetConnectionString("BaseConnection"),
                 dboption => dboption.EnableRetryOnFailure());
         });
 

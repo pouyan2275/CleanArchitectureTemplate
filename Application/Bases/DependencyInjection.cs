@@ -1,15 +1,7 @@
 ﻿using Application.Bases.Implements.Services;
 using Application.Bases.Interfaces.IServices;
-using Application.IServices;
-using Application.Services;
-using Domain.Bases.Interfaces.Repositories;
 using Infrastructure.Bases;
-using Infrastructure.Bases.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
-using System.ComponentModel;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Application.Bases;
 
